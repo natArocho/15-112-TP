@@ -1,0 +1,49 @@
+Nataniel Arocho-Nieves
+andrew id: narochon
+Section K
+
+Term Project Proposal:
+
+    -Project Description
+        My term project will be a game (the name is still pending). The game will have gameplay similar
+	to that of the Fire Emblem games (turn-based strategy RPG), however instead of having set levels,
+	The gameplay will be based in waves, with the objective being to survive as many waves as possible.
+	The player controls 10 units, with each unit having a  unit class (Archer, fighter, etc.) that allows them to
+	use use certain weapon and skill types. The enemy also has units, with enemy units getting stronger each
+	wave. The player units can also be upgraded into more advanced classes and weapons in between waves. 
+	The player and enemy each have "Phases" where they can move and attack opposing units. Once the player phase
+	ends, the enemy phase begins.
+
+    -Competitive Analysis
+	As mentioned before, my project is very similar to that of the Fire Emblem series of video games, however
+	a major difference is that the gameplay a Fire Emblem is very linear, as to "beat" the game you only have
+	to complete the story. For my term project, there is no story and no way to "beat" the game, as the objective 
+	of the game is to survive as many waves as possible.
+
+    -Structural Analysis
+	The project will be divided into multiple python files. The mainGame file is where the actual game will be ran, 
+	where most of the in game objects will be created. The other files will be dedicated to classes and how they interact
+	with each other. For example, the UnitClasses.py file contains all the current classes for the units, and how
+	units attack each other along with other attributes.
+
+    -Algorithmic Analysis
+	The most algotrimically complex part of my project will probably designing a good enemy AI. I plan on approaching
+	this issue by using Dijkstra’s algorithm, which can be used to find the shortest path between nodes in a graph.
+	In this project, each tile of the grid can be considered a node. This would be very useful to designing an AI,
+	as different tiles have different effects on units (for example, sand tiles may reduce movement, water tiles
+	could be impossible to cross, etc) meaning that the algorithim could be used to find the shortest path between
+	enemy units and the player.
+
+    -Timeline Plan
+	I hope to have MVP on this project by TP2, if this is not completed by TP2, then the project will be finished over 
+	Thanksgiving break. As soon as MVP is achieved, the rest of the time will be spent polishing the game (using nice 
+	sprites, good UI, etc.)
+
+    -Version Control Plan
+	The project will be backed up on github.
+
+    -Module List
+	PyGame
+	   
+	
+	  

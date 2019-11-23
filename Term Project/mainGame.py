@@ -10,6 +10,7 @@ import pygame, random
 
 from UnitClasses import *
 from WeaponsClasses import *
+from TileClass import *
 
 #Starter code borrowed from 15-112 PyGame optional lecture notes
 class PygameGame(object):
@@ -31,7 +32,13 @@ class PygameGame(object):
 
     def keyPressed(self, keyCode, modifier):
         if keyCode == pygame.K_SPACE:
-            pass
+            if Unit.selectedUnit == None:
+                for unit in self.players:
+                    if unit.position == (self.curX, self.curY):
+                        unit.select()
+            else:
+                if (self.curX, self.curY) in Unit.selectedUnit.legalMoves(self.cols, self.rows):
+                    Unit.selectedUnit.options(self.curX, self.curY)
 
         if keyCode == pygame.K_x:
             for unit in self.players:
@@ -40,15 +47,23 @@ class PygameGame(object):
 
         if keyCode == pygame.K_RIGHT:
             self.curX += 1
+            if self.curX >= self.cols:
+                self.curX -= 1
 
         if keyCode == pygame.K_LEFT:
             self.curX -= 1
+            if self.curX < 0:
+                self.curX += 1
         
         if keyCode == pygame.K_UP:
             self.curY -= 1
+            if self.curY < 0:
+                self.curY += 1
 
         if keyCode == pygame.K_DOWN:
             self.curY += 1
+            if self.curY >= self.rows:
+                self.curY -= 1
 
     def keyReleased(self, keyCode, modifier):
         pass
@@ -61,24 +76,34 @@ class PygameGame(object):
         xDist = self.width//self.cols
         for row in range(self.rows):
             for col in range(self.cols):
-                pygame.draw.rect(screen, self.bgColor, (xDist*col, yDist*row\
+                pygame.draw.rect(screen, self.grid[row][col].tileSprite, (xDist*col, yDist*row\
                 , xDist, yDist))
-
-        pygame.draw.rect(screen, (0, 0 ,0), (xDist*self.curX, yDist*self.curY\
-            , xDist, yDist))
 
         for unit in self.players:
             if unit.stats["HP"] > 0:
                 pygame.draw.circle(screen, (  0,   0, 255),(xDist*unit.position[0]+xDist//2\
                     , yDist*unit.position[1]+yDist//2), xDist//2)
+                if unit.selected:
+                    for move in unit.legalMoves(self.cols, self.rows):
+                        if move !=  unit.position  :
+                            pygame.draw.rect(screen, (0,0,255), \
+                            (xDist*move[0], yDist*move[1], xDist, yDist))
 
         for unit in self.enemies:
             if unit.stats["HP"] > 0:
                 pygame.draw.circle(screen, (255,  0,   0),(xDist*unit.position[0]+xDist//2\
                     , yDist*unit.position[1]+yDist//2), xDist//2)
 
+        pygame.draw.line(screen, (255, 255 ,0), (xDist*self.curX, yDist*self.curY), \
+            (xDist*self.curX+xDist, yDist*self.curY), 5)
+        pygame.draw.line(screen, (255, 255 ,0), (xDist*self.curX+xDist, yDist*self.curY), \
+            (xDist*self.curX+xDist, yDist*self.curY+xDist), 5)
+        pygame.draw.line(screen, (255, 255 ,0), (xDist*self.curX+xDist, yDist*self.curY+yDist), \
+            (xDist*self.curX, yDist*self.curY+yDist), 5)
+        pygame.draw.line(screen, (255, 255 ,0), (xDist*self.curX, yDist*self.curY+yDist), \
+            (xDist*self.curX, yDist*self.curY), 5)
+
     def isKeyPressed(self, key):
-        ''' return whether a specific key is being held '''
         return self._keys.get(key, False)
 
     def __init__(self, width=800, height=800, fps=60, title="112 Pygame Game"):
@@ -86,9 +111,8 @@ class PygameGame(object):
         self.height = height
         self.fps = fps
         self.title = title
-        self.bgColor = (0, 200, 0)
-        self.rows = 10
-        self.cols = 10
+        self.rows = 25
+        self.cols = 25
 
         self.players = set()
         self.enemies = set()
@@ -96,7 +120,7 @@ class PygameGame(object):
         tempStats = {"HP": 10, "Strength": 15, "Defense": 10, "Speed": 10, "Skill": 10, "Luck":10}
         archer = Archer(tempStats, [Bow("Temp Bow", 5, 100, 5, 0), 0, 0 ,0, 0], (0,2))
         soldier = Soldier(tempStats, [Lance("Temp Lance", 5, 100, 5, 0), 0, 0, 0, 0], (0,4))
-        merc = Mercenary(tempStats, [Sword("Temp Sword", 5, 100, 5, 0), 0, 0, 0, 0], (0,6))
+        merc = Mercenary(tempStats, [Sword("Temp Sword", 5, 100, 5, 0), 0, 0, 0, 0], (15,15))
         bandit = Bandit(tempStats, [Axe("Temp Axe", 5, 100, 5, 0), 0 ,0 ,0 ,0], (0,8))
         self.players.add(archer)
         self.players.add(soldier)
@@ -114,10 +138,15 @@ class PygameGame(object):
 
         self.curX = 0
         self.curY = 0
-
+        
+        self.grid = []
+        for row in range(self.rows):
+            newRow = []
+            for col in range(self.cols):
+                newRow.append(Field())
+            self.grid.append(newRow)
 
     def run(self):
-
         clock = pygame.time.Clock()
         screen = pygame.display.set_mode((self.width, self.height))
         # set the title of the window
@@ -151,7 +180,6 @@ class PygameGame(object):
                     self.keyReleased(event.key, event.mod)
                 elif event.type == pygame.QUIT:
                     playing = False
-            #screen.fill(self.bgColor)
             self.redrawAll(screen)
             pygame.display.flip()
         pygame.quit()

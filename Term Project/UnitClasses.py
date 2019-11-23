@@ -1,6 +1,8 @@
-import random, WeaponsClasses
+import random, pygame, WeaponsClasses
 
 class Unit(object):
+    selectedUnit = None
+
     def __init__(self, stats, inventory, skills, position, classWeapons, move):
         self.stats = stats
         self.inventory = inventory
@@ -13,7 +15,7 @@ class Unit(object):
         self.crit = self.stats["Skill"]/2 + self.equipped.crit
         self.avoid = self.stats["Speed"]*1.5 
         self.attackSpeed = self.stats["Speed"] - self.equipped.weight
-
+        self.selected = False
 
     def battle(self, enemy):
         hitChance = self.accuracy - enemy.avoid
@@ -24,6 +26,37 @@ class Unit(object):
             damage = self.power - enemy.stats["Defense"]
             if damage < 0: damage = 0
             enemy["HP"] = enemy.stats.get["HP"] - damage
+
+    def legalMoves(self, cols, rows):
+        legalMoves = set()
+        curCol, curRow = self.position
+        movesLeft = self.move
+        for xMove in range(self.move+1):
+            for yMove in range(self.move+1):
+                dMove = xMove+yMove
+                if dMove <= self.move:
+                    if curCol+xMove < cols:
+                        if curRow+yMove < rows:
+                            legalMoves.add((curCol+xMove, curRow+yMove))
+                        if curRow-yMove >= 0:
+                            legalMoves.add((curCol+xMove, curRow-yMove))
+                    if curCol+xMove >= 0:
+                        if curRow+yMove < rows:
+                            legalMoves.add((curCol-xMove, curRow+yMove))
+                        if curRow-yMove >= 0:
+                            legalMoves.add((curCol-xMove, curRow-yMove))
+        return legalMoves
+
+    def select(self):
+        self.selected = True
+        Unit.selectedUnit = self
+
+    def options(self, newX, newY):
+        options = ["Items", "Wait"]
+        #Note: this is unfinished! Only moves unit for now.
+        self.position = (newX, newY)
+        self.selected = False
+        Unit.selectedUnit = None
 
 class Archer(Unit):
     def __init__(self, stats, inventory, position):

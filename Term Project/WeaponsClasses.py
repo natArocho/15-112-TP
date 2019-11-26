@@ -33,4 +33,5 @@ class Bow(Weapon):
         wRange = 2 
         self.type = "Bow"
         super().__init__(name, might, hit, crit, wRange, weight)
+        
   

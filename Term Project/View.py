@@ -33,10 +33,13 @@ def redrawAll(self, screen):
                     self.grid[row][col].unit.drawOptions(screen, xDist, yDist, row, col)
                 elif self.grid[row][col].unit.drawAttacks:
                     self.grid[row][col].unit.drawAttackMenu(screen, xDist, yDist, row, col)
+                elif self.grid[row][col].unit.inventoryOn:
+                    self.grid[row][col].unit.drawInventory(screen, xDist, yDist, row, col)
             
     #Cursor
     if (Unit.selectedUnit != None and not Unit.selectedUnit.optionsOn) and \
-        (Unit.selectedUnit != None and not Unit.selectedUnit.drawAttacks) \
+        (Unit.selectedUnit != None and not Unit.selectedUnit.drawAttacks) and \
+        (Unit.selectedUnit != None and not Unit.selectedUnit.inventoryOn) \
             or Unit.selectedUnit == None:
 
         pygame.draw.line(screen, (255, 255 ,0), (xDist*self.curCol, yDist*self.curRow), \

@@ -1,14 +1,17 @@
-import random, pygame, WeaponsClasses, TileClass
+import random, pygame
+from WeaponsClasses import * 
+from TileClass import *
 
 class Unit(object):
     selectedUnit = None
     teams = {}
-    def __init__(self, stats, inventory, skills, classWeapons, move, team, color):
+    def __init__(self, name, stats, inventory, skills, classWeapons, move, team, color):
         if Unit.teams.get(team, 0) == 0:
             Unit.teams[team] = [self]
         else:
             Unit.teams[team].append(self)
 
+        self.name = name
         self.stats = stats
         self.inventory = inventory
         self.skills = skills
@@ -27,6 +30,13 @@ class Unit(object):
         self.attackOptions = set()
         self.optionsOn = False
         self.drawAttacks = False
+        self.inventoryOn = False
+
+    def __repr__(self):
+        return self.name
+
+    def __hash__(self):
+        return hash(self.name)
 
     def battle(self, enemy):
         hitChance = self.accuracy - enemy.avoid
@@ -127,77 +137,103 @@ class Unit(object):
             and grid[newX+dRow][newY+dCol].unit.team == self.team:
                 self.tradeOptions.add(grid[newX+dRow][newY+dCol].unit)
                 if "Trade" not in options: options.insert(0, "Trade")
-        for dRow in range(self.equipped.range+1):
-            for dCol in range(self.equipped.range+1):
-                distance = dRow+dCol
+
+        for dRow in range(-1*self.equipped.range, self.equipped.range+1):
+            for dCol in range(-1*self.equipped.range, self.equipped.range+1):
+                distance = abs(dRow+dCol)
                 if grid[newX+dRow][newY+dCol].unit != None and distance <= self.equipped.range\
                 and grid[newX+dRow][newY+dCol].unit.team != self.team:
                     self.attackOptions.add(grid[newX+dRow][newY+dCol].unit)
                     if "Attack" not in options: options.insert(0, "Attack")
-        print(options)
-        self.optionStr = options
+
+        self.optionList = options
         self.optionsOn = True
 
     def drawOptions(self, screen, xDist, yDist, row, col):
-        pygame.draw.rect(screen, (198, 157, 77), (xDist*col, yDist*row, xDist*2.5, yDist*len(self.optionStr)))
+        pygame.draw.rect(screen, (198, 157, 77), (xDist*col, yDist*row, xDist*2.5, yDist*len(self.optionList)))
+        for i in range(len(self.optionList)):
+            self.drawFont(screen, str(i+1)+": "+self.optionList[i], (xDist*col, yDist*(row+i)))
 
+    def drawFont(self, screen, text, location):
+        pygame.font.init()
+        textFont = pygame.font.SysFont("Arial", 20)
+        textSurface = textFont.render(text, True, (0,0,0))
+        screen.blit(textSurface, location)
 
     def drawAttackMenu(self, screen, xDist, yDist, row, col):
         attackList = list(self.attackOptions)
         pygame.draw.rect(screen, (198, 157, 77), (xDist*col, yDist*row, xDist*2.5, yDist*len(attackList)))
+        for i in range(len(list(attackList))):
+            self.drawFont(screen, str(i+1)+": "+attackList[i].name, (xDist*col, yDist*(row+i)))
 
-    def doAction(self, action, grid):
+    def drawInventory(self, screen, xDist, yDist, row, col):
+        pygame.draw.rect(screen, (198, 157, 77), (xDist*col, yDist*row, xDist*2.5, yDist*len(self.inventory)))
+        for i in range(len(self.inventory)):
+            if isinstance(self.inventory[i], Weapon):
+                self.drawFont(screen, str(i+1)+": "+self.inventory[i].name, (xDist*col, yDist*(row+i)))
+            else:
+                 self.drawFont(screen, str(i+1)+": ", (xDist*col, yDist*(row+i)))
+
+    def doAction(self, action, newPos):
         if action == "Attack":
             self.drawAttacks = True
             self.optionsOn = False
         elif action == "Trade":
             #UNFINISHED
             self.trade()
-        elif action == "Item":
-            #UNFINISHED
-            self.checkInvo()
+        elif action == "Items":
+            self.inventoryOn = True
+            self.optionsOn = False
         elif action == "Wait":
             self.optionsOn = False
-            self.wait()
-
-    def checkInvo(self):
-        pass
+            self.wait(newPos)
 
     def trade(self):
         pass
 
-    def wait(self):
+    def goBackToOps(self):
+        self.inventoryOn = False
+        self.optionsOn = True
+        self.drawAttacks = False
+
+    def goBack(self):        
+        self.optionsOn = False
+        self.selected = False
+        Unit.selectedUnit = None
+
+    def wait(self, newPos):
+        self.postion = newPos
         self.selected = False
         Unit.selectedUnit = None
         self.turnUsed = True
 
 class Archer(Unit):
-    def __init__(self, stats, inventory, team, color):
+    def __init__(self, name, stats, inventory, team, color):
         skills = ["Temp"]
         classWeapons = ["Bow"]
         move = 4
-        super().__init__(stats, inventory, skills, classWeapons, move, team, color)
+        super().__init__(name, stats, inventory, skills, classWeapons, move, team, color)
 
 class Soldier(Unit):
-    def __init__(self, stats, inventory, team, color):
+    def __init__(self, name, stats, inventory, team, color):
         skills = ["Temp"]
         classWeapons = ["Lance"]
         move = 5
-        super().__init__(stats, inventory, skills, classWeapons, move, team, color)
+        super().__init__(name, stats, inventory, skills, classWeapons, move, team, color)
 
 class Mercenary(Unit):
-    def __init__(self, stats, inventory, team, color):
+    def __init__(self, name, stats, inventory, team, color):
         skills = ["Temp"]
         classWeapons = ["Sword"]
         move = 5
-        super().__init__(stats, inventory, skills, classWeapons, move, team, color)
+        super().__init__(name, stats, inventory, skills, classWeapons, move, team, color)
 
 class Bandit(Unit):
-    def __init__(self, stats, inventory, team, color):
+    def __init__(self, name, stats, inventory, team, color):
         skills = ["Temp"]
         classWeapons = ["Axe"]
         move = 4
-        super().__init__(stats, inventory, skills, classWeapons, move, team, color)
+        super().__init__(name, stats, inventory, skills, classWeapons, move, team, color)
 
 
 

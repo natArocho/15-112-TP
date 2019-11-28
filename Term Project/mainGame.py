@@ -46,19 +46,19 @@ class PygameGame(object):
         self.grid[19][18] = Mountain(None)
 
         tempStats = {"HP": 10, "Strength": 15, "Defense": 10, "Speed": 10, "Skill": 10, "Luck":10}
-        archer = Archer(copy.copy(tempStats), [Bow("Temp Bow", 5, 100, 5, 0), 0, 0 ,0, 0], "Player", (0,0,255))
-        soldier = Soldier(copy.copy(tempStats), [Lance("Temp Lance", 5, 100, 5, 0), 0, 0, 0, 0], "Player", (0,0,255))
-        merc = Mercenary(copy.copy(tempStats), [Sword("Temp Sword", 5, 100, 5, 0), 0, 0, 0, 0], "Player", (0,0,255))
-        bandit = Bandit(copy.copy(tempStats), [Axe("Temp Axe", 5, 100, 5, 0), 0 ,0 ,0 ,0], "Player", (0,0,255))
+        archer = Archer("Archer", copy.copy(tempStats), [Bow("Bow", 5, 100, 5, 0), 0, 0 ,0, 0], "Player", (0,0,255))
+        soldier = Soldier("Soldier", copy.copy(tempStats), [Lance("Lance", 5, 100, 5, 0), 0, 0, 0, 0], "Player", (0,0,255))
+        merc = Mercenary("Merc", copy.copy(tempStats), [Sword("Sword", 5, 100, 5, 0), 0, 0, 0, 0], "Player", (0,0,255))
+        bandit = Bandit("Bandit", copy.copy(tempStats), [Axe("Axe", 5, 100, 5, 0), 0 ,0 ,0 ,0], "Player", (0,0,255))
         self.grid[0][2].unit = archer
         self.grid[0][4].unit = soldier
         self.grid[15][15].unit = merc
         self.grid[0][8].unit = bandit
 
-        archer = Archer(copy.copy(tempStats), [Bow("Temp Bow", 5, 100, 5, 0), 0, 0 ,0, 0], "Enemy", (255,0,0))
-        soldier = Soldier(copy.copy(tempStats), [Lance("Temp Lance", 5, 100, 5, 0), 0, 0, 0, 0], "Enemy", (255,0,0))
-        merc = Mercenary(copy.copy(tempStats), [Sword("Temp Sword", 5, 100, 5, 0), 0, 0, 0, 0], "Enemy", (255,0,0))
-        bandit = Bandit(copy.copy(tempStats), [Axe("Temp Axe", 5, 100, 5, 0), 0 ,0 ,0 ,0], "Enemy", (255,0,0))
+        archer = Archer("Archer", copy.copy(tempStats), [Bow("Bow", 5, 100, 5, 0), 0, 0 ,0, 0], "Enemy", (255,0,0))
+        soldier = Soldier("Soldier", copy.copy(tempStats), [Lance("Lance", 5, 100, 5, 0), 0, 0, 0, 0], "Enemy", (255,0,0))
+        merc = Mercenary("Merc", copy.copy(tempStats), [Sword("Sword", 5, 100, 5, 0), 0, 0, 0, 0], "Enemy", (255,0,0))
+        bandit = Bandit("Bandit", copy.copy(tempStats), [Axe("Axe", 5, 100, 5, 0), 0 ,0 ,0 ,0], "Enemy", (255,0,0))
         self.grid[10][2].unit = archer
         self.grid[10][4].unit = soldier
         self.grid[10][16].unit = merc

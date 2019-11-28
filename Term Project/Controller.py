@@ -65,8 +65,14 @@ def keyPressed(self, keyCode, modifier):
         menuKeysPressed(self, keyCode, modifier)
     elif Unit.selectedUnit != None and Unit.selectedUnit.drawAttacks:
         attackKeysPressed(self, keyCode, modifier)
+    elif Unit.selectedUnit != None and Unit.selectedUnit.inventoryOn:
+        inventoryKeysPressed(self, keyCode, modifier)
     else:
         gameKeyPressed(self, keyCode, modifier)
+
+def inventoryKeysPressed(self, keyCode, modifier):
+    if keyCode == pygame.K_b:
+        Unit.selectedUnit.goBackToOps()
 
 def attackKeysPressed(self, keyCode, modifier):
     attackList = list(Unit.selectedUnit.attackOptions)
@@ -80,7 +86,7 @@ def attackKeysPressed(self, keyCode, modifier):
              Unit.selectedUnit.stats["Speed"] > (3+enemy.stats["Speed"]):
                 Unit.selectedUnit.battle(enemy)
 
-    if keyCode == pygame.K_2:
+    if keyCode == pygame.K_2 and len(Unit.selectedUnit.optionList) >= 2:
         enemy = attackList[1]
         Unit.selectedUnit.battle(enemy)
         if enemy.stats["HP"] > 0:
@@ -90,7 +96,7 @@ def attackKeysPressed(self, keyCode, modifier):
              Unit.selectedUnit.stats["Speed"] > (3+enemy.stats["Speed"]):
                 Unit.selectedUnit.battle(enemy)
 
-    if keyCode == pygame.K_3 and len(Unit.selectedUnit.optionStr) >= 3:
+    if keyCode == pygame.K_3 and len(Unit.selectedUnit.optionList) >= 3:
         enemy = attackList[2]
         Unit.selectedUnit.battle(enemy)
         if enemy.stats["HP"] > 0:
@@ -100,7 +106,7 @@ def attackKeysPressed(self, keyCode, modifier):
              Unit.selectedUnit.stats["Speed"] > (3+enemy.stats["Speed"]):
                 Unit.selectedUnit.battle(enemy)
 
-    if keyCode == pygame.K_4 and len(Unit.selectedUnit.optionStr) >= 4:
+    if keyCode == pygame.K_4 and len(Unit.selectedUnit.optionList) >= 4:
         enemy = attackList[3]
         Unit.selectedUnit.battle(enemy)
         if enemy.stats["HP"] > 0:
@@ -110,7 +116,7 @@ def attackKeysPressed(self, keyCode, modifier):
              Unit.selectedUnit.stats["Speed"] > (3+enemy.stats["Speed"]):
                 Unit.selectedUnit.battle(enemy)
 
-    if keyCode == pygame.K_5 and len(Unit.selectedUnit.optionStr) >= 5:
+    if keyCode == pygame.K_5 and len(Unit.selectedUnit.optionList) >= 5:
         enemy = attackList[4]
         Unit.selectedUnit.battle(enemy)
         if enemy.stats["HP"] > 0:
@@ -120,7 +126,7 @@ def attackKeysPressed(self, keyCode, modifier):
              Unit.selectedUnit.stats["Speed"] > (3+enemy.stats["Speed"]):
                 Unit.selectedUnit.battle(enemy)
 
-    if keyCode == pygame.K_6 and len(Unit.selectedUnit.optionStr) >= 6:
+    if keyCode == pygame.K_6 and len(Unit.selectedUnit.optionList) >= 6:
         enemy = attackList[5]
         Unit.selectedUnit.battle(enemy)
         if enemy.stats["HP"] > 0:
@@ -130,7 +136,7 @@ def attackKeysPressed(self, keyCode, modifier):
              Unit.selectedUnit.stats["Speed"] > (3+enemy.stats["Speed"]):
                 Unit.selectedUnit.battle(enemy)
 
-    if keyCode == pygame.K_7 and len(Unit.selectedUnit.optionStr) >= 7:
+    if keyCode == pygame.K_7 and len(Unit.selectedUnit.optionList) >= 7:
         enemy = attackList[6]
         Unit.selectedUnit.battle(enemy)
         if enemy.stats["HP"] > 0:
@@ -140,7 +146,7 @@ def attackKeysPressed(self, keyCode, modifier):
              Unit.selectedUnit.stats["Speed"] > (3+enemy.stats["Speed"]):
                 Unit.selectedUnit.battle(enemy)
 
-    if keyCode == pygame.K_8 and len(Unit.selectedUnit.optionStr) >= 8:
+    if keyCode == pygame.K_8 and len(Unit.selectedUnit.optionList) >= 8:
         enemy = attackList[7]
         Unit.selectedUnit.battle(enemy)
         if enemy.stats["HP"] > 0:
@@ -150,7 +156,7 @@ def attackKeysPressed(self, keyCode, modifier):
              Unit.selectedUnit.stats["Speed"] > (3+enemy.stats["Speed"]):
                 Unit.selectedUnit.battle(enemy)
 
-    if keyCode == pygame.K_9 and len(Unit.selectedUnit.optionStr) >= 9:
+    if keyCode == pygame.K_9 and len(Unit.selectedUnit.optionList) >= 9:
         enemy = attackList[8]
         Unit.selectedUnit.battle(enemy)
         if enemy.stats["HP"] > 0:
@@ -159,21 +165,28 @@ def attackKeysPressed(self, keyCode, modifier):
             if Unit.selectedUnit.stats["HP"] > 0 and \
              Unit.selectedUnit.stats["Speed"] > (3+enemy.stats["Speed"]):
                 Unit.selectedUnit.battle(enemy)
+    
+    if keyCode == pygame.K_b:
+        Unit.selectedUnit.goBackToOps()
 
 def menuKeysPressed(self, keyCode, modifier):
     if keyCode == pygame.K_1:
-        action = Unit.selectedUnit.optionStr[0]
-        Unit.selectedUnit.doAction(action, self.grid)
+        action = Unit.selectedUnit.optionList[0]
+        Unit.selectedUnit.doAction(action, (self.curRow, self.curCol))
     if keyCode == pygame.K_2:
-        action = Unit.selectedUnit.optionStr[1]
-        Unit.selectedUnit.doAction(action, self.grid)
-    if keyCode == pygame.K_3 and len(Unit.selectedUnit.optionStr) >= 3:
-        action = Unit.selectedUnit.optionStr[2]
-        Unit.selectedUnit.doAction(action, self.grid)
-    if keyCode == pygame.K_4 and len(Unit.selectedUnit.optionStr) >= 4:
-        action = Unit.selectedUnit.optionStr[3]
-        Unit.selectedUnit.doAction(action, self.grid)
-
+        action = Unit.selectedUnit.optionList[1]
+        Unit.selectedUnit.doAction(action, (self.curRow, self.curCol))
+    if keyCode == pygame.K_3 and len(Unit.selectedUnit.optionList) >= 3:
+        action = Unit.selectedUnit.optionList[2]
+        Unit.selectedUnit.doAction(action, (self.curRow, self.curCol))
+    if keyCode == pygame.K_4 and len(Unit.selectedUnit.optionList) >= 4:
+        action = Unit.selectedUnit.optionList[3]
+        Unit.selectedUnit.doAction(action, (self.curRow, self.curCol))
+    if keyCode == pygame.K_b:
+        oldRow, oldCol = Unit.selectedUnit.position
+        self.grid[oldRow][oldCol].unit = Unit.selectedUnit
+        self.grid[self.curRow][self.curCol].unit = None
+        Unit.selectedUnit.goBack()
 
 def gameKeyPressed(self, keyCode, modifier):
     if keyCode == pygame.K_x:

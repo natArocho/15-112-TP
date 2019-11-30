@@ -32,6 +32,9 @@ class Unit(object):
         self.drawAttacks = False
         self.inventoryOn = False
 
+    def __eq__(self, other):
+        return isinstance(other, Unit) and self.name == other.name
+
     def __repr__(self):
         return self.name
 
@@ -185,8 +188,9 @@ class Unit(object):
             self.inventoryOn = True
             self.optionsOn = False
         elif action == "Wait":
+            self.postion = newPos
             self.optionsOn = False
-            self.wait(newPos)
+            self.wait()
 
     def trade(self):
         pass
@@ -201,8 +205,7 @@ class Unit(object):
         self.selected = False
         Unit.selectedUnit = None
 
-    def wait(self, newPos):
-        self.postion = newPos
+    def wait(self):
         self.selected = False
         Unit.selectedUnit = None
         self.turnUsed = True

@@ -31,19 +31,19 @@ class PygameGame(object):
             newRow = []
             for col in range(self.cols):
                 if row in range(0, 3) and col in range(10, 25):
-                    newRow.append(Sand(None))
+                    newRow.append(Sand(None, (row,col)))
                 else: 
-                    newRow.append(Field(None))
+                    newRow.append(Field(None, (row,col)))
             self.grid.append(newRow)
 
-        self.grid[16][18] = Mountain(None)
-        self.grid[17][17] = Mountain(None)
-        self.grid[17][18] = Mountain(None)
-        self.grid[17][19] = Mountain(None)
-        self.grid[18][17] = Mountain(None)
-        self.grid[18][18] = Mountain(None)
-        self.grid[18][19] = Mountain(None)
-        self.grid[19][18] = Mountain(None)
+        self.grid[16][18] = Mountain(None, (16, 18))
+        self.grid[17][17] = Mountain(None, (17, 17))
+        self.grid[17][18] = Mountain(None, (17, 18))
+        self.grid[17][19] = Mountain(None, (17, 19))
+        self.grid[18][17] = Mountain(None, (18, 17))
+        self.grid[18][18] = Mountain(None, (18, 18))
+        self.grid[18][19] = Mountain(None, (18, 19))
+        self.grid[19][18] = Mountain(None, (19, 18))
 
         tempStats = {"HP": 10, "Strength": 15, "Defense": 10, "Speed": 10, "Skill": 10, "Luck":10}
         archer = Archer("Archer", copy.copy(tempStats), [Bow("Bow", 5, 100, 5, 0), 0, 0 ,0, 0], "Player", (0,0,255))

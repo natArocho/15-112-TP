@@ -8,7 +8,7 @@ def redrawAll(self, screen):
     yDist = self.height//self.rows
     xDist = self.width//self.cols
     for row in range(self.rows):
-        for col in range(self.cols):
+        for col in range(self.cols): 
             pygame.draw.rect(screen, self.grid[row][col].tileSprite, (xDist*col, yDist*row\
             , xDist, yDist))
             if self.grid[row][col].unit != None and not self.grid[row][col].unit.turnUsed:
@@ -17,7 +17,7 @@ def redrawAll(self, screen):
             elif self.grid[row][col].unit != None and self.grid[row][col].unit.turnUsed:
                 pygame.draw.circle(screen, (178, 178, 178), \
                     (xDist*col+xDist//2, yDist*row+yDist//2), xDist//2)
-
+ 
     for row in range(self.rows):
         for col in range(self.cols):
             if self.grid[row][col].unit != None and self.grid[row][col].unit.selected:

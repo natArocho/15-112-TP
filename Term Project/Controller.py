@@ -13,7 +13,7 @@ def setUnits(self):
                     self.grid[row][col].unit = None
                 elif not self.grid[row][col].unit.drawAttacks and not self.grid[row][col].unit.optionsOn:
                     self.grid[row][col].unit.setLegalMovesAndAttack((row,col), self.grid)
-
+ 
 def isPlayerPhase():
     for unit in Unit.teams["Player"]:
         if not unit.turnUsed:
@@ -23,30 +23,133 @@ def isPlayerPhase():
 def init(self):
     setUnits(self)
     if not isPlayerPhase():
-        moveEnemies(self)
+        moveEnemiesAI(self)
 
-def moveEnemies(self):
+def moveEnemiesAI(self): 
     for row in range(self.rows):
         for col in range(self.cols):
             unit = self.grid[row][col].unit
-            if unit != None and unit.team == "Enemy":
-                unit.select(row, col)
-                moveList = list(unit.legalRange) 
-                randMove = moveList[random.randint(0, len(moveList)-1)]
-                self.grid[Unit.selectedUnit.position[0]][Unit.selectedUnit.position[1]].unit = None
-                while True:
-                    if self.grid[randMove[0]][randMove[1]].unit == None:
-                        self.grid[randMove[0]][randMove[1]].unit = Unit.selectedUnit
-                        break
-                    else:
-                        randMove = moveList[random.randint(0, len(moveList)-1)]
-                unit.selected = False
-                Unit.selectedUnit = None
-                self.turnUsed = True
+            if unit != None and unit.team == "Enemy" and not unit.turnUsed:
+                print(unit, row, col)
+                unit.position = (row, col)
+                attackList = []
+                for mRow, mCol in unit.attackMoves:
+                    if self.grid[mRow][mCol].unit != None and \
+                     self.grid[mRow][mCol].unit.team == "Player":
+                        attackList.append(self.grid[mRow][mCol].unit)
+                if len(attackList) > 0:
+                    weakestUnit = getWeakestUnit(attackList)
+                    weakPath = findShortestPath(self, unit, weakestUnit.position, row, col)
+                    self.grid[weakPath[1][0]][weakPath[1][1]].unit = unit
+                    self.grid[row][col].unit = None
+                    unit.battle(weakestUnit)
+                    if weakestUnit.stats["HP"] > 0:
+                        weakestUnit.battle(unit)
+                        #Double attack if speed is high enough!
+                        if Unit.selectedUnit.stats["HP"] > 0 and \
+                         unit.stats["Speed"] > (3+weakestUnit.stats["Speed"]):
+                            unit.battle(weakestUnit)
+                else:
+                    paths = []
+                    for playerUnit in Unit.teams["Player"]:
+                        path = findShortestPath(self, unit, playerUnit.position, row, col)
+                        paths.append(path)
+                    closestUnitPath = getClosest(paths)
+                    for node in closestUnitPath:
+                        if node in unit.legalRange:
+                            self.grid[node[0]][node[1]].unit = unit
+                            unit.turnUsed = True
+                            self.grid[row][col].unit = None
+                            break
 
     for unit in Unit.teams["Player"]:
         unit.turnUsed = False
-        pass
+    for unit in Unit.teams["Enemy"]:
+        unit.turnUsed = False
+
+def getWeakestUnit(aList):
+    weakest = None
+    for unit in aList:
+        if weakest == None or unit.stats["Defense"] < weakest.stats["Defense"]:
+            weakest = unit
+    return unit
+
+def getClosest(paths):
+    shortestPath = None
+    for path in paths:
+        if shortestPath == None or len(path) < len(shortestPath):
+            shortestPath = path
+    return shortestPath
+
+#Adds possible movement options,
+#so long as they are in bounds and are passable by unit
+def moveOptions(self, row, col):
+    moveOp = []
+    dirs = [(1,0) , (0,1), (-1,0), (0,-1)]
+    for dRow, dCol in dirs:
+        newRow = row+dRow
+        newCol = col+dCol
+        if newRow < self.rows and newRow >= 0 \
+         and newCol < self.cols and newCol >= 0 \
+         and self.grid[newRow][newCol].movePenalty != None:
+            moveOp.append((newRow, newCol))
+    self.grid[row][col].children = moveOp
+            
+
+#Note: this implements the a* search algorithm
+def findShortestPath(self, enemy, position, row, col, openS=None, closedS=None):
+    if closedS == None:
+        closedS = set()
+        openS = set()
+        openS.add((row, col))
+    
+    while len(openS) != 0:
+        curNode = smallestCost(self, openS, position)
+        openS.remove(curNode)
+        closedS.add(curNode)
+
+        if curNode == position:
+            path = []
+            path.append(curNode)
+            while self.grid[curNode[0]][curNode[1]].parent != None:
+                parent = self.grid[curNode[0]][curNode[1]].parent
+                path.append(parent.position)
+                curNode = parent.position
+            Tile.removeParentChild()
+            return path
+
+        moveOptions(self, curNode[0], curNode[1])
+        for node in self.grid[curNode[0]][curNode[1]].children:
+            newG = self.grid[node[0]][node[1]].movePenalty + self.grid[curNode[0]][curNode[1]].gCost()
+            if node in closedS: 
+                continue
+            if (node in openS and self.grid[node[0]][node[1]].gCost() < newG) or node not in openS:
+                self.grid[node[0]][node[1]].parent = self.grid[curNode[0]][curNode[1]]
+                if node not in openS:
+                    openS.add(node)
+            
+
+#Finds node w/ smallest f cost  
+def smallestCost(self, openS, position):
+    fSet = {}
+    for node in openS:
+        fSet[node] = (fCost(self, node, position))
+
+    lowest = None
+    for key in fSet:
+        if lowest == None or fSet[key] < fSet[lowest]:
+            lowest = key
+    return lowest
+
+def fCost(self, node, position):
+    g = self.grid[node[0]][node[1]].gCost()
+    h = disBtwnNodes(node, position)
+    return g + h
+
+def disBtwnNodes(n1, n2):
+    xDist = abs(n1[0] - n2[0])
+    yDist = abs(n1[1] - n2[1])
+    return xDist + yDist
 
 def mousePressed(self, x, y):
     pass

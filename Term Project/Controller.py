@@ -30,7 +30,6 @@ def moveEnemiesAI(self):
         for col in range(self.cols):
             unit = self.grid[row][col].unit
             if unit != None and unit.team == "Enemy" and not unit.turnUsed:
-                print(unit, row, col)
                 unit.position = (row, col)
                 attackList = []
                 for mRow, mCol in unit.attackMoves:
@@ -77,6 +76,8 @@ def getWeakestUnit(aList):
 def getClosest(paths):
     shortestPath = None
     for path in paths:
+        if path == None:
+            continue
         if shortestPath == None or len(path) < len(shortestPath):
             shortestPath = path
     return shortestPath

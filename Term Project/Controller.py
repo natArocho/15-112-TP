@@ -297,6 +297,12 @@ def gameKeyPressed(self, keyCode, modifier):
         if self.grid[self.curRow][self.curCol].unit != None:
             print(self.grid[self.curRow][self.curCol].unit.stats)
 
+    if keyCode == pygame.K_z:
+        if self.displayEnemyAttacks:
+            self.displayEnemyAttacks = False
+        else:
+            self.displayEnemyAttacks = True
+
     if keyCode == pygame.K_RIGHT:
         self.curCol += 1
         if self.curCol >= self.cols:

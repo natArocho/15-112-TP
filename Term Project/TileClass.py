@@ -1,6 +1,10 @@
+import pygame
+
 class Tile(object):
 
     tiles = []
+    xDist = None
+    yDist = None
 
     #Note, the tileSprite will be a sprite eventually, for now it is just 
     # a tuple w/ RGB values
@@ -29,26 +33,29 @@ class Tile(object):
         return g
 
 class Field(Tile):
+    tileSprite = None
+
     def __init__(self, unit, position):
-        tileSprite = (0, 200, 0)
         movePenalty = 1
         sideEffects = None
-        super().__init__(position, movePenalty, tileSprite, sideEffects)
+        super().__init__(position, movePenalty, Field.tileSprite, sideEffects)
 
 class Sand(Tile):
+    tileSprite = None
+
     def __init__(self, unit, position):
-        tileSprite = (255, 214, 151)
         movePenalty = 1.5
         sideEffects = None
-        super().__init__(position, movePenalty, tileSprite, sideEffects)
+        super().__init__(position, movePenalty, Sand.tileSprite, sideEffects)
 
 #Note: a move penalty of None means the terrain cannot be crossed
 class Mountain(Tile):
+    tileSprite = None
+
     def __init__(self, unit, position):
-        tileSprite = (86, 90, 86)
         movePenalty = None
         sideEffects = None
-        super().__init__(position, movePenalty, tileSprite, sideEffects)
+        super().__init__(position, movePenalty, Mountain.tileSprite, sideEffects)
 
 
 

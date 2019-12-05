@@ -56,6 +56,7 @@ class Unit(object):
 
     #Sets movement and attack range
     def setLegalMovesAndAttack(self, position, grid):
+        self.position = position
         self.legalRange = self.legalMoves(position, grid, self.move)
         self.attackMoves = self.attackRange(position, grid)
 

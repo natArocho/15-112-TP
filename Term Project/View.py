@@ -8,21 +8,21 @@ def redrawAll(self, screen):
     yDist = self.height//self.rows
     xDist = self.width//self.cols
     for row in range(self.rows):
-        for col in range(self.cols): 
-            pygame.draw.rect(screen, self.grid[row][col].tileSprite, (xDist*col, yDist*row\
-            , xDist, yDist))
+        for col in range(self.cols):
+            screen.blit(self.grid[row][col].tileSprite, (xDist*col, yDist*row))
             if self.grid[row][col].unit != None and not self.grid[row][col].unit.turnUsed:
                 pygame.draw.circle(screen, self.grid[row][col].unit.color, \
                     (xDist*col+xDist//2, yDist*row+yDist//2), xDist//2)
             elif self.grid[row][col].unit != None and self.grid[row][col].unit.turnUsed:
                 pygame.draw.circle(screen, (178, 178, 178), \
                     (xDist*col+xDist//2, yDist*row+yDist//2), xDist//2)
- 
+    
     for row in range(self.rows):
         for col in range(self.cols):
-            if self.grid[row][col].unit != None and self.grid[row][col].unit.selected:
+            if self.grid[row][col].unit != None and (self.grid[row][col].unit.selected \
+             or (self.grid[row][col].unit.team == "Enemy") and self.displayEnemyAttacks):
                 for move in self.grid[row][col].unit.attackMoves:
-                        if move in self.grid[row][col].unit.legalRange:
+                        if move in self.grid[row][col].unit.legalRange and self.grid[row][col].unit.team == "Player":
                             if move != self.grid[row][col].unit.position:
                                 pygame.draw.rect(screen, (0,0,255), \
                                 (xDist*move[1], yDist*move[0], xDist, yDist))
@@ -36,6 +36,7 @@ def redrawAll(self, screen):
                 elif self.grid[row][col].unit.inventoryOn:
                     self.grid[row][col].unit.drawInventory(screen, xDist, yDist, row, col)
             
+
     #Cursor
     if (Unit.selectedUnit != None and not Unit.selectedUnit.optionsOn) and \
         (Unit.selectedUnit != None and not Unit.selectedUnit.drawAttacks) and \

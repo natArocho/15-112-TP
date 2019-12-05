@@ -41,6 +41,7 @@ def proceduralMap(self):
         grid = createMountains(self, grid, seedRow, seedCol, mountainNum)
     grid = fieldFill(self, grid)
     if isSolvable(self, grid, mounTotal):
+
         numOfSand = random.randint(1,4)
         for sand in range(numOfSand):
             fillNum = random.randint(2, 5)
@@ -49,7 +50,28 @@ def proceduralMap(self):
             while grid[seedRow][seedCol].movePenalty == None:
                 seedRow = random.randint(0, self.rows-1)
                 seedCol = random.randint(0, self.cols-1)
-            grid = otherFill(self, grid, seedRow, seedCol, fillNum)
+            grid = sandFill(self, grid, seedRow, seedCol, fillNum)
+
+        numOfForest = random.randint(1, 3)
+        for forest in range(numOfForest):
+            forestLen = random.randint(1, 4)
+            forestHeight = random.randint(1,4)
+            seedRow = random.randint(0, self.rows-1)
+            seedCol = random.randint(0, self.cols-1)
+            while grid[seedRow][seedCol].movePenalty == None or isinstance(grid[seedRow][seedCol], Sand):
+                seedRow = random.randint(0, self.rows-1)
+                seedCol = random.randint(0, self.cols-1)
+            grid = forestFill(self, grid, seedRow, seedCol, forestLen, forestHeight)
+
+        numOfForts = random.randint(1,3)
+        for fort in range(numOfForts):
+            seedRow = random.randint(0, self.rows-1)
+            seedCol = random.randint(0, self.cols-1)
+            while not isinstance(grid[seedRow][seedCol], Field):
+                seedRow = random.randint(0, self.rows-1)
+                seedCol = random.randint(0, self.cols-1)
+            grid[seedRow][seedCol] = Fort(None, (seedRow, seedCol))
+
         return grid 
     else:
         return proceduralMap(self)
@@ -111,7 +133,7 @@ def fieldFill(self, grid, position=None):
             grid = fieldFill(self, grid, (newRow, newCol))
     return grid 
     
-def otherFill(self, grid, seedRow, seedCol, fillNum):
+def sandFill(self, grid, seedRow, seedCol, fillNum):
     dirs = [(1,0),(0,1),(-1,0),(0,-1)]
 
     if fillNum >= 0:
@@ -123,5 +145,13 @@ def otherFill(self, grid, seedRow, seedCol, fillNum):
             if grid[newRow][newCol].movePenalty == None:
                 continue
             else:
-                grid = otherFill(self, grid, newRow, newCol, fillNum-1)
+                grid = sandFill(self, grid, newRow, newCol, fillNum-1)
+    return grid
+
+def forestFill(self, grid, seedRow, seedCol, forestLen, forestHeight):
+    for row in range(forestLen):
+        for col in range(forestHeight):
+            if seedRow+row in range(self.rows) and seedCol+col in range(self.cols) \
+             and grid[seedRow+row][seedCol+col].movePenalty != None and not isinstance(grid[seedRow+row][seedCol+col], Sand):
+                grid[seedRow+row][seedCol+col] = Tree(None, (seedRow+row, seedCol+col))
     return grid

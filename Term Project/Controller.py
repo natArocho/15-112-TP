@@ -41,13 +41,13 @@ def moveEnemiesAI(self):
                     weakPath = findShortestPath(self, unit, weakestUnit.position, row, col)
                     self.grid[weakPath[1][0]][weakPath[1][1]].unit = unit
                     self.grid[row][col].unit = None
-                    unit.battle(weakestUnit)
+                    unit.battle(weakestUnit, self.grid)
                     if weakestUnit.stats["HP"] > 0:
-                        weakestUnit.battle(unit)
+                        weakestUnit.battle(unit, self.grid)
                         #Double attack if speed is high enough!
                         if Unit.selectedUnit.stats["HP"] > 0 and \
                          unit.stats["Speed"] > (3+weakestUnit.stats["Speed"]):
-                            unit.battle(weakestUnit)
+                            unit.battle(weakestUnit, self.grid)
                 else:
                     paths = []
                     for playerUnit in Unit.teams["Player"]:
@@ -55,7 +55,8 @@ def moveEnemiesAI(self):
                         paths.append(path)
                     closestUnitPath = getClosest(paths)
                     for node in closestUnitPath:
-                        if node in unit.legalRange:
+                        if node in unit.legalRange and self.grid[node[0]][node[1]].unit == None:
+                            unit.position = node
                             self.grid[node[0]][node[1]].unit = unit
                             unit.turnUsed = True
                             self.grid[row][col].unit = None
@@ -182,93 +183,93 @@ def attackKeysPressed(self, keyCode, modifier):
     attackList = list(Unit.selectedUnit.attackOptions)
     if keyCode == pygame.K_1:
         enemy = attackList[0]
-        Unit.selectedUnit.battle(enemy)
+        Unit.selectedUnit.battle(enemy, self.grid)
         if enemy.stats["HP"] > 0:
-            enemy.battle(Unit.selectedUnit)
+            enemy.battle(Unit.selectedUnit, self.grid)
             #Double attack if speed is high enough!
             if Unit.selectedUnit.stats["HP"] > 0 and \
              Unit.selectedUnit.stats["Speed"] > (3+enemy.stats["Speed"]):
-                Unit.selectedUnit.battle(enemy)
+                Unit.selectedUnit.battle(enemy, self.grid)
 
     if keyCode == pygame.K_2 and len(Unit.selectedUnit.optionList) >= 2:
         enemy = attackList[1]
-        Unit.selectedUnit.battle(enemy)
+        Unit.selectedUnit.battle(enemy, self.grid)
         if enemy.stats["HP"] > 0:
-            enemy.battle(Unit.selectedUnit)
+            enemy.battle(Unit.selectedUnit, self.grid)
             #Double attack if speed is high enough!
             if Unit.selectedUnit.stats["HP"] > 0 and \
              Unit.selectedUnit.stats["Speed"] > (3+enemy.stats["Speed"]):
-                Unit.selectedUnit.battle(enemy)
+                Unit.selectedUnit.battle(enemy, self.grid)
 
     if keyCode == pygame.K_3 and len(Unit.selectedUnit.optionList) >= 3:
         enemy = attackList[2]
-        Unit.selectedUnit.battle(enemy)
+        Unit.selectedUnit.battle(enemy, self.grid)
         if enemy.stats["HP"] > 0:
-            enemy.battle(Unit.selectedUnit)
+            enemy.battle(Unit.selectedUnit, self.grid)
             #Double attack if speed is high enough!
             if Unit.selectedUnit.stats["HP"] > 0 and \
              Unit.selectedUnit.stats["Speed"] > (3+enemy.stats["Speed"]):
-                Unit.selectedUnit.battle(enemy)
+                Unit.selectedUnit.battle(enemy, self.grid)
 
     if keyCode == pygame.K_4 and len(Unit.selectedUnit.optionList) >= 4:
         enemy = attackList[3]
-        Unit.selectedUnit.battle(enemy)
+        Unit.selectedUnit.battle(enemy, self.grid)
         if enemy.stats["HP"] > 0:
-            enemy.battle(Unit.selectedUnit)
+            enemy.battle(Unit.selectedUnit, self.grid)
             #Double attack if speed is high enough!
             if Unit.selectedUnit.stats["HP"] > 0 and \
              Unit.selectedUnit.stats["Speed"] > (3+enemy.stats["Speed"]):
-                Unit.selectedUnit.battle(enemy)
+                Unit.selectedUnit.battle(enemy, self.grid)
 
     if keyCode == pygame.K_5 and len(Unit.selectedUnit.optionList) >= 5:
         enemy = attackList[4]
-        Unit.selectedUnit.battle(enemy)
+        Unit.selectedUnit.battle(enemy, self.grid)
         if enemy.stats["HP"] > 0:
-            enemy.battle(Unit.selectedUnit)
+            enemy.battle(Unit.selectedUnit, self.grid)
             #Double attack if speed is high enough!
             if Unit.selectedUnit.stats["HP"] > 0 and \
              Unit.selectedUnit.stats["Speed"] > (3+enemy.stats["Speed"]):
-                Unit.selectedUnit.battle(enemy)
+                Unit.selectedUnit.battle(enemy, self.grid)
 
     if keyCode == pygame.K_6 and len(Unit.selectedUnit.optionList) >= 6:
         enemy = attackList[5]
-        Unit.selectedUnit.battle(enemy)
+        Unit.selectedUnit.battle(enemy, self.grid)
         if enemy.stats["HP"] > 0:
-            enemy.battle(Unit.selectedUnit)
+            enemy.battle(Unit.selectedUnit, self.grid)
             #Double attack if speed is high enough!
             if Unit.selectedUnit.stats["HP"] > 0 and \
              Unit.selectedUnit.stats["Speed"] > (3+enemy.stats["Speed"]):
-                Unit.selectedUnit.battle(enemy)
+                Unit.selectedUnit.battle(enemy, self.grid)
 
     if keyCode == pygame.K_7 and len(Unit.selectedUnit.optionList) >= 7:
         enemy = attackList[6]
-        Unit.selectedUnit.battle(enemy)
+        Unit.selectedUnit.battle(enemy, self.grid)
         if enemy.stats["HP"] > 0:
-            enemy.battle(Unit.selectedUnit)
+            enemy.battle(Unit.selectedUnit, self.grid)
             #Double attack if speed is high enough!
             if Unit.selectedUnit.stats["HP"] > 0 and \
              Unit.selectedUnit.stats["Speed"] > (3+enemy.stats["Speed"]):
-                Unit.selectedUnit.battle(enemy)
+                Unit.selectedUnit.battle(enemy, self.grid)
 
     if keyCode == pygame.K_8 and len(Unit.selectedUnit.optionList) >= 8:
         enemy = attackList[7]
-        Unit.selectedUnit.battle(enemy)
+        Unit.selectedUnit.battle(enemy, self.grid)
         if enemy.stats["HP"] > 0:
-            enemy.battle(Unit.selectedUnit)
+            enemy.battle(Unit.selectedUnit, self.grid)
             #Double attack if speed is high enough!
             if Unit.selectedUnit.stats["HP"] > 0 and \
              Unit.selectedUnit.stats["Speed"] > (3+enemy.stats["Speed"]):
-                Unit.selectedUnit.battle(enemy)
+                Unit.selectedUnit.battle(enemy, self.grid)
 
     if keyCode == pygame.K_9 and len(Unit.selectedUnit.optionList) >= 9:
         enemy = attackList[8]
-        Unit.selectedUnit.battle(enemy)
+        Unit.selectedUnit.battle(enemy, self.grid)
         if enemy.stats["HP"] > 0:
-            enemy.battle(Unit.selectedUnit)
+            enemy.battle(Unit.selectedUnit, self.grid)
             #Double attack if speed is high enough!
             if Unit.selectedUnit.stats["HP"] > 0 and \
              Unit.selectedUnit.stats["Speed"] > (3+enemy.stats["Speed"]):
-                Unit.selectedUnit.battle(enemy)
+                Unit.selectedUnit.battle(enemy, self.grid)
     
     if keyCode == pygame.K_b:
         Unit.selectedUnit.goBackToOps()

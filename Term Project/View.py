@@ -11,8 +11,10 @@ def redrawAll(self, screen):
         for col in range(self.cols):
             screen.blit(self.grid[row][col].tileSprite, (xDist*col, yDist*row))
             if self.grid[row][col].unit != None and not self.grid[row][col].unit.turnUsed:
-                pygame.draw.circle(screen, self.grid[row][col].unit.color, \
-                    (xDist*col+xDist//2, yDist*row+yDist//2), xDist//2)
+                if self.grid[row][col].unit.team == "Player":  
+                    screen.blit(self.grid[row][col].unit.playerSprite, (xDist*col, yDist*row))
+                else:
+                    screen.blit(self.grid[row][col].unit.enemySprite, (xDist*col, yDist*row))
             elif self.grid[row][col].unit != None and self.grid[row][col].unit.turnUsed:
                 pygame.draw.circle(screen, (178, 178, 178), \
                     (xDist*col+xDist//2, yDist*row+yDist//2), xDist//2)
@@ -35,7 +37,6 @@ def redrawAll(self, screen):
                     self.grid[row][col].unit.drawAttackMenu(screen, xDist, yDist, row, col)
                 elif self.grid[row][col].unit.inventoryOn:
                     self.grid[row][col].unit.drawInventory(screen, xDist, yDist, row, col)
-            
 
     #Cursor
     if (Unit.selectedUnit != None and not Unit.selectedUnit.optionsOn) and \

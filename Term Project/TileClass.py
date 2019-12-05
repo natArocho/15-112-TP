@@ -40,6 +40,14 @@ class Field(Tile):
         sideEffects = None
         super().__init__(position, movePenalty, Field.tileSprite, sideEffects)
 
+class Tree(Tile):
+    tileSprite = None
+
+    def __init__(self, unit, position):
+        movePenalty = 2
+        sideEffects = ("Avoid", 30)
+        super().__init__(position, movePenalty, Tree.tileSprite, sideEffects)
+
 class Sand(Tile):
     tileSprite = None
 
@@ -47,6 +55,15 @@ class Sand(Tile):
         movePenalty = 1.5
         sideEffects = None
         super().__init__(position, movePenalty, Sand.tileSprite, sideEffects)
+
+class Fort(Tile):
+    tileSprite = None
+
+    def __init__(self, unit, position):
+        movePenalty = 1
+        sideEffects = ("Protection", 10)
+        super().__init__(position, movePenalty, Fort.tileSprite, sideEffects)
+
 
 #Note: a move penalty of None means the terrain cannot be crossed
 class Mountain(Tile):

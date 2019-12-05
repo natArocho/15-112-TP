@@ -3,8 +3,12 @@ from WeaponsClasses import *
 from TileClass import *
 
 class Unit(object):
+
     selectedUnit = None
     teams = {}
+    xDist = None
+    yDist = None
+
     def __init__(self, name, stats, inventory, skills, classWeapons, move, team, color):
         if Unit.teams.get(team, 0) == 0:
             Unit.teams[team] = [self]
@@ -41,18 +45,35 @@ class Unit(object):
     def __hash__(self):
         return hash(self.name)
 
-    def battle(self, enemy):
-        hitChance = self.accuracy - enemy.avoid
+    def battle(self, enemy, grid):
+        pAvoBuff, pDefBuf = Unit.applyBuffs(self, grid)
+        eAvoBuff, eDefBuf = Unit.applyBuffs(enemy, grid)
+
+        hitChance = self.accuracy + pAvoBuff - enemy.avoid - eAvoBuff 
         critRate = self.crit - enemy.stats["Luck"]
         if hitChance > 100: hitChance = 100
         battleRoll = random.randint(1,100)
         if battleRoll <= hitChance:
-            damage = self.power - enemy.stats["Defense"]
+            damage = self.power + pDefBuf - enemy.stats["Defense"] - eDefBuf
             if damage < 0: damage = 0
             enemy.stats["HP"] = enemy.stats.get("HP", 0) - damage
         self.turnUsed = True
         self.drawAttacks = False
         self.wait()
+
+    @staticmethod
+    def applyBuffs(unit, grid):
+        avoBuff = 0
+        defBuff = 0
+
+        if grid[unit.position[0]][unit.position[1]].sideEffects != None:
+            if grid[unit.position[0]][unit.position[1]].sideEffects[0] == "Avoid":
+                avoBuff = grid[unit.position[0]][unit.position[1]].sideEffects[1]
+
+            if grid[unit.position[0]][unit.position[1]].sideEffects[0] == "Protection":
+                defBuff = grid[unit.position[0]][unit.position[1]].sideEffects[1]
+
+        return avoBuff, defBuff
 
     #Sets movement and attack range
     def setLegalMovesAndAttack(self, position, grid):
@@ -212,6 +233,10 @@ class Unit(object):
         self.turnUsed = True
 
 class Archer(Unit):
+    
+    playerSprite = None
+    enemySprite = None
+
     def __init__(self, name, stats, inventory, team, color):
         skills = ["Temp"]
         classWeapons = ["Bow"]
@@ -219,6 +244,10 @@ class Archer(Unit):
         super().__init__(name, stats, inventory, skills, classWeapons, move, team, color)
 
 class Soldier(Unit):
+    
+    playerSprite = None
+    enemySprite = None
+
     def __init__(self, name, stats, inventory, team, color):
         skills = ["Temp"]
         classWeapons = ["Lance"]
@@ -226,6 +255,10 @@ class Soldier(Unit):
         super().__init__(name, stats, inventory, skills, classWeapons, move, team, color)
 
 class Mercenary(Unit):
+
+    playerSprite = None
+    enemySprite = None
+
     def __init__(self, name, stats, inventory, team, color):
         skills = ["Temp"]
         classWeapons = ["Sword"]
@@ -233,6 +266,10 @@ class Mercenary(Unit):
         super().__init__(name, stats, inventory, skills, classWeapons, move, team, color)
 
 class Bandit(Unit):
+    
+    playerSprite = None
+    enemySprite = None
+
     def __init__(self, name, stats, inventory, team, color):
         skills = ["Temp"]
         classWeapons = ["Axe"]
